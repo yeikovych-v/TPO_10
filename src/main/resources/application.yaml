@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: TPO_10
+  jpa:
+    show-sql: true
+  profiles:
+    active: ddl-validate
