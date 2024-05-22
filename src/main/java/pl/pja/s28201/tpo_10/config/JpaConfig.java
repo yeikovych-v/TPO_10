@@ -28,7 +28,7 @@ public class JpaConfig {
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.h2.Driver");
-        dataSource.setUrl("jdbc:h2:file:./db/tpo10-db.mv.db");
+        dataSource.setUrl("jdbc:h2:file:./db/tpo10");
         dataSource.setUsername("admin");
         dataSource.setPassword("admin");
         return dataSource;
