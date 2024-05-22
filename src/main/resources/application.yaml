@@ -4,4 +4,4 @@ spring:
   jpa:
     show-sql: true
   profiles:
-    active: ddl-validate
+    active: ddl-update
