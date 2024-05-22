@@ -8,10 +8,6 @@ import pl.pja.s28201.tpo_10.exception.IdNotDefinedException;
 @Entity
 public class UrlObject {
 
-//    @Id
-//    @JsonIgnore
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
     @Id
     private String id;
     private String name;
@@ -28,14 +24,6 @@ public class UrlObject {
     public void setId(String idStr) {
         this.id = idStr;
     }
-
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
 
     public String getName() {
         return name;
@@ -76,5 +64,9 @@ public class UrlObject {
     public void setRedirectUrl(String defaultPath) {
         if (id.length() != 10) throw new IdNotDefinedException("Id is not defined. Cannot set redirection Url.");
         this.redirectUrl = defaultPath + id;
+    }
+
+    public void incrementVisits() {
+        this.visits++;
     }
 }
