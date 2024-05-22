@@ -14,16 +14,6 @@ public class UrlParsingService {
         this.idAndUrlService = idAndUrlService;
     }
 
-    public UrlObject createUrlObjectWithNoPass(String name, String targetUrl) {
-        var urlObject = new UrlObject();
-        urlObject.setId(idAndUrlService.generateId());
-        urlObject.setName(name);
-        urlObject.setTargetUrl(targetUrl);
-        urlObject.setRedirectUrl(idAndUrlService.getDefaultUrlPath());
-
-        return urlObject;
-    }
-
     public UrlObject createProtectedUrlObject(String name, String targetUrl, String password) {
         var urlObject = new UrlObject();
         urlObject.setId(idAndUrlService.generateId());
