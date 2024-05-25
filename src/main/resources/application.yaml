@@ -5,3 +5,12 @@ spring:
     show-sql: true
   profiles:
     active: ddl-update
+s28201:
+  errors:
+    url:
+      not-https:
+          message:
+            en: Can save only https urls.
+            pl: Można zapisywać tylko adresy URL https.
+            de: Kann nur https-URLs speichern.
+
