@@ -17,14 +17,10 @@ public class SwaggerConfig {
         Server server = new Server()
                 .url("http://localhost:8080")
                 .description("TPO_10");
-//        server.setUrl("http://localhost:8080");
-//        server.setDescription("TPO_10");
 
         Contact contact = new Contact()
                 .name("Volodymyr Yeikovych")
                 .email("s28201@pjwstk.edu.pl");
-//        contact.setName("Volodymyr Yeikovych");
-//        contact.setEmail("s28201@pjwstk.edu.pl");
 
         Info info = new Info()
                 .title("TPO_10 API")
