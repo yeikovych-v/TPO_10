@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tpo 11</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h2 th:text="${uiDto.chooseLanguageHeader}">Choose Language</h2>
+    <div class="btn-group" role="group" aria-label="Language">
+        <button type="button" class="btn btn-primary" onclick="changeLanguage('en')" th:text="${uiDto.englishButton}">English</button>
+        <button type="button" class="btn btn-primary" onclick="changeLanguage('pl')" th:text="${uiDto.polishButton}">Polish</button>
+        <button type="button" class="btn btn-primary" onclick="changeLanguage('de')" th:text="${uiDto.germanButton}">German</button>
+    </div>
+
+    <hr>
+
+    <h2 th:text="${uiDto.submitFormHeader}">Submit Form</h2>
+    <form th:action="@{/}" method="post" th:object="${dto}">
+        <div class="form-group">
+            <label for="name" th:text="${uiDto.nameLabel}">Name:</label>
+            <input type="text" class="form-control" id="name" th:field="*{name}" name="name">
+            <div th:if="${errorsName.size() > 0}" class="alert alert-danger" role="alert">
+                <ul>
+                    <li th:each="error : ${errorsName}" th:text="${error}" th:if="${errorsName.size() > 0}"></li>
+                </ul>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="password" th:text="${uiDto.passwordLabel}">Password:</label>
+            <input type="password" class="form-control" id="password" th:field="*{password}" name="password">
+            <div th:if="${errorsPsw.size() > 0}" class="alert alert-danger" role="alert">
+                <ul>
+                    <li th:each="error : ${errorsPsw}" th:text="${error}" th:if="${errorsPsw.size() > 0}"></li>
+                </ul>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="targetUrl" th:text="${uiDto.targetUrlLabel}">Target URL:</label>
+            <input type="text" class="form-control" id="targetUrl" th:field="*{targetUrl}" name="targetUrl">
+            <div th:if="${errorsUrl.size() > 0}" class="alert alert-danger" role="alert">
+                <ul>
+                    <li th:each="error : ${errorsUrl}" th:text="${error}" th:if="${errorsUrl.size() > 0}"></li>
+                </ul>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary" th:text="${uiDto.buttonSubmit}">Submit</button>
+    </form>
+
+    <div class="alert alert-success" role="alert" th:if="${successMsg.length() > 0}">
+        <span th:text="${successMsg}" th:if="${successMsg.length() > 0}"></span>
+    </div>
+
+    <hr>
+
+    <a th:href="@{/urlAuth}">
+        <button type="button" class="btn btn-success" th:text="${uiDto.buttonRedirect}">Edit Urls</button>
+    </a>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    // JavaScript function to change language
+    function changeLanguage(lang) {
+        fetch('/lang/' + lang, {
+            method: 'POST'
+        }).then(response => {
+            if (response.ok) {
+                window.location.reload();
+            }
+        });
+    }
+
+</script>
+</body>
+</html>
