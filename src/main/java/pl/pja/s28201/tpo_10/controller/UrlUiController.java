@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pl.pja.s28201.tpo_10.dto.UrlObjectDto;
+import pl.pja.s28201.tpo_10.repository.UrlObjectRepository;
 import pl.pja.s28201.tpo_10.service.lang.GeneralLanguageService;
 
 import java.util.ArrayList;
@@ -22,11 +23,13 @@ public class UrlUiController {
 
     private final GeneralLanguageService generalLanguageService;
     private final RestTemplate restTemplate;
+    private final UrlObjectRepository urlObjectRepository;
 
     @Autowired
-    public UrlUiController(GeneralLanguageService generalLanguageService, RestTemplate restTemplate) {
+    public UrlUiController(GeneralLanguageService generalLanguageService, RestTemplate restTemplate, UrlObjectRepository urlObjectRepository) {
         this.generalLanguageService = generalLanguageService;
         this.restTemplate = restTemplate;
+        this.urlObjectRepository = urlObjectRepository;
     }
 
     @GetMapping
@@ -35,7 +38,9 @@ public class UrlUiController {
             @ModelAttribute("successMsg") String successMsg,
             @ModelAttribute("errorsName") ArrayList<String> errorsName,
             @ModelAttribute("errorsPsw") ArrayList<String> errorsPsw,
-            @ModelAttribute("errorsUrl") ArrayList<String> errorsUrl
+            @ModelAttribute("errorsUrl") ArrayList<String> errorsUrl,
+            @ModelAttribute("urlAlreadyExists") String urlAlreadyExists,
+            @ModelAttribute("deletedSuccess") String deletedSuccess
     ) {
         model.addAttribute("dto", new UrlObjectDto());
         model.addAttribute("uiDto", generalLanguageService.getLandingDto());
@@ -44,13 +49,9 @@ public class UrlUiController {
         model.addAttribute("errorsName", errorsName);
         model.addAttribute("errorsPsw", errorsPsw);
         model.addAttribute("errorsUrl", errorsUrl);
+        model.addAttribute("urlAlreadyExists", urlAlreadyExists);
+        model.addAttribute("deletedSuccess", deletedSuccess);
 
-        System.out.println("LL::"+ generalLanguageService.getLanguageCode());
-        System.out.println(errorsName.toString());
-        System.out.println(errorsPsw.toString());
-        System.out.println(errorsUrl.toString());
-        System.out.println(successMsg);
-        System.out.println("---------------");
         return "landing";
     }
 
@@ -68,24 +69,22 @@ public class UrlUiController {
             ra.addFlashAttribute("errorsUrl", errors.getFieldErrors("targetUrl").stream().map(DefaultMessageSourceResolvable::getDefaultMessage));
         }
 
-        if (errors.hasErrors()) {
+        var urlByName = urlObjectRepository.findByTargetUrl(dto.getTargetUrl());
+
+        if (urlByName.isPresent()) {
+            ra.addFlashAttribute("urlAlreadyExists", generalLanguageService.getUrlAlreadyExistsErrorMessage());
+        }
+
+        if (errors.hasErrors() || urlByName.isPresent()) {
             return "redirect:/";
         }
 
         ResponseEntity<Object> response = restTemplate.postForEntity("http://localhost:8080/api/links", dto, Object.class);
 
         if (response.getStatusCode() == HttpStatus.CREATED) {
-            ra.addFlashAttribute("successMsg", "Link was Successfully created.");
+            ra.addFlashAttribute("successMsg", generalLanguageService.getLinkCreatedMessage());
         }
 
         return "redirect:/";
-    }
-
-
-//    To Other Controller
-    @GetMapping("/urlAuth")
-    public String displayHelloPage(Model model) {
-
-        return "urlAuth";
     }
 }
