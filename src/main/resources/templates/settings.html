@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TPO 11</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container" th:object="${urlDto}">
+    <form method="post" th:action="@{/settings}">
+        <input th:value="*{id}" th:field="*{id}" hidden>
+        <h2 th:text="${uiDto.settingsHeader}">URL Details</h2>
+        <div class="form-group">
+            <label th:text="${uiDto.nameLabel}" for="urlName">URL Name:</label>
+            <input type="text" th:value="*{name}" th:field="*{name}" class="form-control" id="urlName" name="name">
+        </div>
+        <div class="form-group">
+            <label th:text="${uiDto.targetUrlLabel}" for="targetUrl">Target URL:</label>
+            <input type="text" th:value="*{targetUrl}" th:field="*{targetUrl}" class="form-control" id="targetUrl"
+                   name="targetUrl">
+        </div>
+        <div class="alert alert-danger" role="alert" th:if="${conflict.length() > 0}">
+            <span th:text="${conflict}" th:if="${conflict.length() > 0}"></span>
+        </div>
+        <div class="form-group">
+            <label th:text="${uiDto.redirectUrlLabel}" for="redirectUrl">Redirect URL:</label>
+            <input type="text" th:value="*{redirectUrl}" th:field="*{redirectUrl}" class="form-control" id="redirectUrl"
+                   name="redirectUrl" disabled>
+        </div>
+        <div class="form-group">
+            <label th:text="${uiDto.visitsLabel}" for="visits">Number of Visits:</label>
+            <input type="number" th:value="*{visits}" th:field="*{visits}" class="form-control" id="visits"
+                   name="visits" disabled>
+        </div>
+        <button th:text="${uiDto.buttonSubmit}" type="submit" class="btn btn-primary">Save Changes</button>
+        <a th:href="@{/}">
+            <button th:text="${uiDto.buttonCancel}" type="button" class="btn btn-success">Cancel and Go Back</button>
+        </a>
+        <div class="alert alert-danger" role="alert" th:if="${badRequest.length() > 0}">
+            <span th:text="${badRequest}" th:if="${badRequest.length() > 0}"></span>
+        </div>
+    </form>
+    <form method="post" th:action="@{/settings/delete}">
+        <input th:value="*{id}" th:field="*{id}" hidden>
+            <button th:text="${uiDto.buttonDelete}" type="submit" class="btn btn-secondary">Delete Record</button>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
