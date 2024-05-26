@@ -24,4 +24,5 @@ public @interface StrongPassword {
     int upperMin() default 1;
     int numbersMin() default 1;
     int specialMin() default 1;
+    int lengthMin() default 10;
 }
