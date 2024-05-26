@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>tpo 11</title>
-    <!-- Bootstrap CSS -->
+    <title>TPO 11</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
@@ -46,6 +45,9 @@
                     <li th:each="error : ${errorsUrl}" th:text="${error}" th:if="${errorsUrl.size() > 0}"></li>
                 </ul>
             </div>
+            <div class="alert alert-danger" role="alert" th:if="${urlAlreadyExists.length() > 0}">
+                <span th:text="${urlAlreadyExists}" th:if="${urlAlreadyExists.length() > 0}"></span>
+            </div>
         </div>
         <button type="submit" class="btn btn-primary" th:text="${uiDto.buttonSubmit}">Submit</button>
     </form>
@@ -53,21 +55,22 @@
     <div class="alert alert-success" role="alert" th:if="${successMsg.length() > 0}">
         <span th:text="${successMsg}" th:if="${successMsg.length() > 0}"></span>
     </div>
+    <div class="alert alert-success" role="alert" th:if="${deletedSuccess.length() > 0}">
+        <span th:text="${deletedSuccess}" th:if="${deletedSuccess.length() > 0}"></span>
+    </div>
 
     <hr>
 
-    <a th:href="@{/urlAuth}">
+    <a th:href="@{/auth}">
         <button type="button" class="btn btn-success" th:text="${uiDto.buttonRedirect}">Edit Urls</button>
     </a>
 </div>
 
-<!-- Bootstrap JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
-    // JavaScript function to change language
     function changeLanguage(lang) {
         fetch('/lang/' + lang, {
             method: 'POST'
@@ -77,7 +80,6 @@
             }
         });
     }
-
 </script>
 </body>
 </html>
