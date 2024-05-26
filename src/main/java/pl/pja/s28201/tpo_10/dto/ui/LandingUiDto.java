@@ -1,4 +1,4 @@
-package pl.pja.s28201.tpo_10.dto;
+package pl.pja.s28201.tpo_10.dto.ui;
 
 
 public class LandingUiDto {
@@ -8,7 +8,6 @@ public class LandingUiDto {
     private String polishButton;
     private String germanButton;
     private String submitFormHeader;
-
     private String nameLabel;
     private String passwordLabel;
     private String targetUrlLabel;
