@@ -13,4 +13,7 @@ public interface UrlObjectRepository extends CrudRepository<UrlObject, String> {
     List<UrlObject> findAll();
     @NonNull
     Optional<UrlObject> findById(@NonNull String id);
+    Optional<UrlObject> findByTargetUrl(String targetUrl);
+
+    Optional<UrlObject> findByNameAndPassword(String name, String password);
 }
