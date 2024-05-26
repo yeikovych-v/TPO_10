@@ -2,20 +2,31 @@ package pl.pja.s28201.tpo_10.validation.password;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class PasswordValidator implements ConstraintValidator<StrongPassword, String> {
-
-    private int lowerMin;
-    private int upperMin;
-    private int numbersMin;
-    private int specialMin;
 
     private static final Pattern LOWER_CASE = Pattern.compile("[a-z]");
     private static final Pattern UPPER_CASE = Pattern.compile("[A-Z]");
     private static final Pattern DIGIT = Pattern.compile("\\d");
     private static final Pattern SPECIAL_CHAR = Pattern.compile("[^a-zA-Z0-9]");
+
+    private final MessageSource messageSource;
+    private int lowerMin;
+    private int upperMin;
+    private int numbersMin;
+    private int specialMin;
+    private int lengthMin;
+
+    @Autowired
+    public PasswordValidator(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
     @Override
     public void initialize(StrongPassword constraintAnnotation) {
@@ -23,6 +34,7 @@ public class PasswordValidator implements ConstraintValidator<StrongPassword, St
         this.upperMin = constraintAnnotation.upperMin();
         this.numbersMin = constraintAnnotation.numbersMin();
         this.specialMin = constraintAnnotation.specialMin();
+        this.lengthMin = constraintAnnotation.lengthMin();
     }
 
     @Override
@@ -37,39 +49,47 @@ public class PasswordValidator implements ConstraintValidator<StrongPassword, St
         long specialCount = password.chars().filter(ch -> SPECIAL_CHAR.matcher(Character.toString(ch)).matches()).count();
 
         boolean isValid = true;
+        if (password.isEmpty()) {
+            return true;
+        }
         if (lowerCount < lowerMin) {
             isValid = false;
-            context.buildConstraintViolationWithTemplate("Password must contain at least " + lowerMin + " lowercase letter(s)")
+            String msg = resolveMessage("{s28201.errors.password.min-lc.message}", lowerMin);
+            context.buildConstraintViolationWithTemplate(msg)
                     .addConstraintViolation();
         }
         if (upperCount < upperMin) {
             isValid = false;
-            context.buildConstraintViolationWithTemplate("Password must contain at least " + upperMin + " uppercase letter(s)")
+            String msg = resolveMessage("{s28201.errors.password.min-uc.message}", upperMin);
+            context.buildConstraintViolationWithTemplate(msg)
                     .addConstraintViolation();
         }
         if (numberCount < numbersMin) {
             isValid = false;
-            context.buildConstraintViolationWithTemplate("Password must contain at least " + numbersMin + " number(s)")
+            String msg = resolveMessage("{s28201.errors.password.min-numbers.message}", numbersMin);
+            context.buildConstraintViolationWithTemplate(msg)
                     .addConstraintViolation();
         }
         if (specialCount < specialMin) {
             isValid = false;
-            context.buildConstraintViolationWithTemplate("Password must contain at least " + specialMin + " special character(s)")
+            String msg = resolveMessage("{s28201.errors.password.min-special.message}", specialMin);
+            context.buildConstraintViolationWithTemplate(msg)
                     .addConstraintViolation();
         }
-        if (password.isEmpty()) {
+        if (password.length() < lengthMin) {
             isValid = false;
-            context.buildConstraintViolationWithTemplate("Password must not be empty.")
-                    .addConstraintViolation();
-        }
-        if (password.length() < 10) {
-            isValid = false;
-            context.buildConstraintViolationWithTemplate("Password length must be more or equal to 10.")
+            String msg = resolveMessage("{s28201.errors.password.min-length.message}", lengthMin);
+            context.buildConstraintViolationWithTemplate(msg)
                     .addConstraintViolation();
         }
 
         context.disableDefaultConstraintViolation();
 
         return isValid;
+    }
+
+    private String resolveMessage(String code, Object... args) {
+        Locale locale = LocaleContextHolder.getLocale();
+        return messageSource.getMessage(code, args, locale);
     }
 }
