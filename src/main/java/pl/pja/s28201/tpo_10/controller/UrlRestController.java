@@ -1,9 +1,12 @@
 package pl.pja.s28201.tpo_10.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import pl.pja.s28201.tpo_10.dto.UrlObjectDto;
 import pl.pja.s28201.tpo_10.model.UrlObject;
@@ -15,21 +18,31 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/links", produces = MediaType.APPLICATION_JSON_VALUE)
-public class UrlController {
+public class UrlRestController {
 
     private final UrlParsingService urlParsingService;
     private final UrlObjectRepository urlRepository;
 
     @Autowired
-    public UrlController(UrlParsingService urlParsingService, UrlObjectRepository urlRepository) {
+    public UrlRestController(UrlParsingService urlParsingService, UrlObjectRepository urlRepository) {
         this.urlParsingService = urlParsingService;
         this.urlRepository = urlRepository;
     }
 
     @PostMapping
-    public ResponseEntity<Object> postNewLink(@RequestBody UrlObjectDto urlObjectDto) {
+    public ResponseEntity<Object> postNewLink(@RequestBody @Valid UrlObjectDto urlObjectDto, Errors errors) {
         var psw = urlObjectDto.getPassword();
         if (psw == null) psw = "";
+
+        if (errors.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage));
+        }
+
+        var urlByName = urlRepository.findByTargetUrl(urlObjectDto.getTargetUrl());
+
+        if (urlByName.isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("400 Bad Request - Provided Url already exists in the system.");
+        }
 
         var urlObject = urlParsingService.createProtectedUrlObject(urlObjectDto.getName(), urlObjectDto.getTargetUrl(), psw);
         System.out.println("PSW::" + urlObject.getPassword());
@@ -64,7 +77,6 @@ public class UrlController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("404 Not Found");
         }
 
-
         var toUpdate = dbOpt.get();
 
         if (hasWrongPassword(toUpdate, urlDto.getPassword())) {
@@ -72,6 +84,15 @@ public class UrlController {
                     .status(HttpStatus.FORBIDDEN)
                     .header("Reason", "wrong password")
                     .body("403 Forbidden");
+        }
+
+        var urlByName = urlRepository.findByTargetUrl(urlDto.getTargetUrl());
+
+        if (urlByName.isPresent()) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .header("Reason", "Url with this target name already exists.")
+                    .body("409 Conflict");
         }
 
         var name = urlDto.getName();
