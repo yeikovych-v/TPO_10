@@ -22,6 +22,19 @@ public class RuntimeMessageSource extends AbstractMessageSource {
     @Override
     protected MessageFormat resolveCode(@NonNull String code, @NonNull Locale locale) {
         String message = validationService.getMessageCode(code);
-        return new MessageFormat(message != null ? message : code, locale);
+
+        return new MessageFormat(message != null ? message : code, Locale.getDefault());
+    }
+
+    @Override
+    protected String getMessageInternal(String code, Object[] args, Locale locale) {
+
+        if (args == null) return super.getMessageInternal(code, args, locale);
+
+        String message = validationService.getMessageCodeWithParams(code, args);
+
+        if (message == null) return super.getMessageInternal(code, args, locale);
+
+        return message;
     }
 }
