@@ -1,16 +1,57 @@
 spring:
   application:
-    name: TPO_10
+    name: TPO_11
   jpa:
     show-sql: true
   profiles:
-    active: ddl-update
+    active: ddl-validate
 s28201:
   errors:
     url:
+      invalid:
+        message:
+          en: Must be a valid URL.
+          pl: Musi być poprawnym adresem URL.
+          de: Muss eine gültige URL sein.
       not-https:
-          message:
-            en: Can save only https urls.
-            pl: Można zapisywać tylko adresy URL https.
-            de: Kann nur https-URLs speichern.
-
+        message:
+          en: Can save only https urls.
+          pl: Można zapisywać tylko adresy URL https.
+          de: Kann nur https-URLs speichern.
+    password:
+      min-length:
+        message:
+          en: Password length must be more or equal to {0}.
+          pl: Długość hasła musi być równa lub większa niż {0}.
+          de: Die Passwortlänge muss mindestens {0} Zeichen betragen.
+      min-lc:
+        message:
+          en: Password must contain at least {0} lowercase letter(s).
+          pl: Hasło musi zawierać co najmniej {0} małą/e literę/y.
+          de: Das Passwort muss mindestens {0} Kleinbuchstaben enthalten.
+      min-uc:
+        message:
+          en: Password must contain at least {0} uppercase letter(s).
+          pl: Hasło musi zawierać co najmniej {0} dużą/e literę/y.
+          de: Das Passwort muss mindestens {0} Großbuchstaben enthalten.
+      min-numbers:
+        message:
+          en: Password must contain at least {0} number(s).
+          pl: Hasło musi zawierać co najmniej {0} cyfrę/y.
+          de: Das Passwort muss mindestens {0} Zahl(en) enthalten.
+      min-special:
+        message:
+          en: Password must contain at least {0} special character(s).
+          pl: Hasło musi zawierać co najmniej {0} znak/znaki specjalny/e.
+          de: Das Passwort muss mindestens {0} Sonderzeichen enthalten.
+      not-empty:
+        message:
+          en: Password must not be empty.
+          pl: Hasło nie może być puste.
+          de: Das Passwort darf nicht leer sein.
+        strings:
+      length:
+        message:
+          en: Length must be between 5 and 10 characters.
+          pl: Długość musi zawierać się między 5 a 10 znakami.
+          de: Die Länge muss zwischen 5 und 10 Zeichen liegen.
