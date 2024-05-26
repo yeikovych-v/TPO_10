@@ -31,6 +31,7 @@ public class ValidationService {
 
     private String getErrorMessageFromCode(String code) {
         var codeWithLang = code + "." + languageService.getLanguageCode();
+
         return environment.getProperty(codeWithLang);
     }
 
@@ -43,4 +44,30 @@ public class ValidationService {
     }
 
 
+    public String getMessageCodeWithParams(String code, Object[] args) {
+        code = trimParenthesis(code);
+        if (!isLocalDomainCode(code)) return code;
+
+        if (isErrorMessage(code)) {
+            var rawMessage = getErrorMessageFromCode(code);
+            return addArgsToMessageAndReturn(rawMessage, args);
+        }
+
+        return code;
+    }
+
+    private String trimParenthesis(String code) {
+        return code.substring(1, code.length() - 1);
+    }
+
+    private String addArgsToMessageAndReturn(String rawMessage, Object[] args) {
+        var cookedMsg = rawMessage;
+
+        if (args == null) return cookedMsg;
+
+        for (int i = 0; i < args.length; i++) {;
+            cookedMsg = cookedMsg.replace("{" + i + "}", args[i].toString());
+        }
+        return cookedMsg;
+    }
 }
